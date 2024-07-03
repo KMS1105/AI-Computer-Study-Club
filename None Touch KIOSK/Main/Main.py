@@ -39,7 +39,7 @@ def recog_gesture():
         min_detection_confidence=0.7, 
         min_tracking_confidence=0.7)
 
-    file = np.genfromtxt('C:/Users/12612/OneDrive/바탕 화면/Python/AI/HPE/동아리/my_gesture_train.csv', delimiter=',') # 각 제스처들의 라벨과 각도가 저장되어 있음, 정확도를 높이고 싶으면 데이터를 추가해보자!**
+    file = np.genfromtxt('데이터셋 파일 경로', delimiter=',') # 각 제스처들의 라벨과 각도가 저장되어 있음, 정확도를 높이고 싶으면 데이터를 추가해보자!**
     angle = file[:,:-1].astype(np.float32) # 각도
     label = file[:, -1].astype(np.float32) # 라벨
     knn = cv2.ml.KNearest_create() 
