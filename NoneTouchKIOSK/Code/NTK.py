@@ -39,7 +39,7 @@ def recog_gesture():
         min_detection_confidence=0.7, 
         min_tracking_confidence=0.7)
 
-    file = np.genfromtxt('데이터셋 파일 경로', delimiter=',') # 각 제스처들의 라벨과 각도가 저장되어 있음, 정확도를 높이고 싶으면 데이터를 추가해보자!**
+    file = np.genfromtxt('C:/Users/12612/OneDrive/바탕 화면/Python/AI/HPE/동아리/my_gesture_train.csv', delimiter=',') # 각 제스처들의 라벨과 각도가 저장되어 있음, 정확도를 높이고 싶으면 데이터를 추가해보자!**
     angle = file[:,:-1].astype(np.float32) # 각도
     label = file[:, -1].astype(np.float32) # 라벨
     knn = cv2.ml.KNearest_create() 
@@ -122,7 +122,7 @@ def last_fnc_detect():
         if MainWindow.exe_last_fnc_Detect == False:
             recog_gesture()
             MainWindow.fnc_Detect()
-            time.sleep(0.5)
+            time.sleep(0.1)
 
 class App(QMainWindow):
     def __init__(self):
@@ -134,16 +134,14 @@ class App(QMainWindow):
         self.center()
         self.nowpg = 0
         self.run = True
-        self.topping = [['None', 0], ['P500', 500], ['P600', 600]]
+        self.topping = [['HOT', 0], ['ICE', 500]]
         self.basket = []
-        self.OptL = []
-        self.sum_option = 0
         self.exe_last_fnc_Detect = False
         self.select_menu = ""
         self.total_price = 0
         self.MenuText = ''
         self.OptionText = ''
-        self.menu = [["아메리카노", 1500], ["아프리카노", 1800], ["아카리프노", 2100]]
+        self.menu = [["아메리카노", 2500], ["카페라떼", 3000], ["에스프레소", 2000]]
         self.MainText = 'Shopping Basket: '
         self.new_text = ''
 
@@ -175,15 +173,15 @@ class App(QMainWindow):
         self.Main_check = QLabel(self.Mainpage)
         self.Main_check.setFrameShape(QFrame.Box)  
         self.Main_check.setText('Shopping Basket: 0')
-        self.Main_check.setGeometry(30, 750, 700, 170)
+        self.Main_check.setGeometry(30, 720, 700, 200)
         self.btn1 = QPushButton(self.Mainpage) 
-        self.btn1.setText(str(self.menu[0][0])+'\n가격: '+str(self.menu[0][1]))
+        self.btn1.setText(str("(1)\n"+self.menu[0][0])+'\n가격: '+str(self.menu[0][1]))
         self.btn1.setGeometry(20,160,200,200) # 위치 및 크기 지정
         self.btn2 = QPushButton(self.Mainpage) 
-        self.btn2.setText(str(self.menu[1][0])+'\n가격: '+str(self.menu[1][1]))
+        self.btn2.setText(str("(2)\n"+self.menu[1][0])+'\n가격: '+str(self.menu[1][1]))
         self.btn2.setGeometry(235,160,200,200) 
         self.btn3 = QPushButton(self.Mainpage) 
-        self.btn3.setText(str(self.menu[2][0])+'\n가격: '+str(self.menu[2][1]))
+        self.btn3.setText(str("(3)\n"+self.menu[2][0])+'\n가격: '+str(self.menu[2][1]))
         self.btn3.setGeometry(450,160,200,200) 
         self.checkbtn1 = QPushButton(self.Mainpage)
         self.checkbtn1.setText('확인') 
@@ -193,14 +191,11 @@ class App(QMainWindow):
         self.Reset.setGeometry(15,15,60,40)
 
         self.option1 = QPushButton(self.Optionpage) # Optionpage를 부모로 option1 생성
-        self.option1.setText('옵션1: \n'+self.topping[0][0]+'\n가격: '+str(self.topping[0][1])) 
+        self.option1.setText("(1)\n"+'옵션1: \n'+self.topping[0][0]+'\n가격: '+str(self.topping[0][1])) 
         self.option1.setGeometry(20,160,200,200) # 위치 및 크기 지정 
         self.option2 = QPushButton(self.Optionpage) # Optionpage를 부모로 option2 생성
-        self.option2.setText('옵션2: \n'+self.topping[1][0]+'\n가격: '+str(self.topping[1][1])) 
+        self.option2.setText("(2)\n"+'옵션2: \n'+self.topping[1][0]+'\n가격: '+str(self.topping[1][1])) 
         self.option2.setGeometry(235,160,200,200) # 위치 및 크기 지정 
-        self.option3 = QPushButton(self.Optionpage) # Optionpage를 부모로 option3 생성
-        self.option3.setText('옵션3: \n'+self.topping[2][0]+'\n가격: '+str(self.topping[2][1])) 
-        self.option3.setGeometry(20,420,200,200) # 위치 및 크기 지정 
         self.checkbtn2 = QPushButton(self.Optionpage)
         self.checkbtn2.setText('담기') 
         self.checkbtn2.setGeometry(590,780,60,40) 
@@ -271,7 +266,7 @@ class App(QMainWindow):
 
         self.btns = [ 
             self.btn1, self.btn2, self.btn3, 
-            self.option1, self.option2, self.option3, self.checkbtn5
+            self.option1, self.option2, self.checkbtn5
         ]
         
         self.exceptbtns = [
@@ -377,7 +372,6 @@ class App(QMainWindow):
         self.btn3.clicked.connect(self.Menu3)
         self.option1.clicked.connect(self.Option1)
         self.option2.clicked.connect(self.Option2)
-        self.option3.clicked.connect(self.Option3)
         self.checkbtn1.clicked.connect(self.GotoSlc)
         self.checkbtn2.clicked.connect(self.PutItIn)
         self.checkbtn3.clicked.connect(self.QRPay)
@@ -393,7 +387,7 @@ class App(QMainWindow):
         global barcode_data
         self.nowpg = 0
         self.run = True
-        self.topping = [['None', 0], ['P500', 500], ['P600', 600]]
+        self.topping = [['HOT', 0], ['ICE', 500]]
         self.basket = []
         self.OptL = []
         self.sum_option = 0
@@ -402,7 +396,7 @@ class App(QMainWindow):
         self.total_price = 0
         self.MenuText = ''
         self.OptionText = ''
-        self.menu = [["아메리카노", 1500], ["아프리카노", 1800], ["아카리프노", 2100]]
+        self.menu = [["아메리카노", 2500], ["카페라떼", 3000], ["에스프레소", 2000]]
         self.MainText = 'Shopping Basket: '
         self.new_text = ''
         self.Main_check.setText('Shopping Basket: 0')
@@ -426,36 +420,29 @@ class App(QMainWindow):
 
     def Option1(self):
         print("option1") 
-        self.basket.append(self.topping[0])
+        self.basket = self.topping[0]
+        print(self.basket)
 
     def Option2(self):
         print("option2")
-        self.basket.append(self.topping[1])
-
-    def Option3(self):
-        print("option3")
-        self.basket.append(self.topping[2])
+        self.basket = self.topping[1]
+        print(self.basket)
 
     def PutItIn(self):
         self.nowpg = 0
         self.stack.setCurrentWidget(self.Mainpage)
-        self.OptL = []
-
-        for SlcOpt in self.basket:
-            self.OptL.append(SlcOpt)
-            self.sum_option = int(SlcOpt[1])
-            print("OptL: "+str(self.OptL))
         
-        self.basket = []
         self.MenuText = "\n{}: {}".format(self.select_menu[0], self.select_menu[1])
-        self.OptionText = " + {}".format(self.OptL)
+        self.OptionText = " + {}: {}".format(self.basket[0], self.basket[1])
         self.MainText = self.MainText+self.MenuText+self.OptionText
-        self.total_price += self.sum_option + int(self.select_menu[1])
+        self.total_price += int(self.basket[1]) + int(self.select_menu[1])
         self.Main_check.setText(self.MainText)
         
-        print("total: "+str(self.select_menu)+str(self.OptL))
+        print("total: "+str(self.select_menu)+str(self.basket))
         print("합계 금액: "+str(self.total_price))
         print(self.MainText)
+        self.basket = []
+
 
     def GotoSlc(self):
         self.nowpg = 2
@@ -500,9 +487,17 @@ class App(QMainWindow):
     def Check(self):
         if self.stack.currentWidget() == self.Paypage2:
             self.nowpg = 5
+        
+        self.RecepitBasic_text = ["\n주소:대전광역시 서구 둔산동...",
+                        "\n대표:ㅁㅁㅁ             전화:042-1234-1234",
+                        "\n=======================================================================================\n\n"]
+        self.receipt_text = ""
 
-        self.receipt_text = ''+self.new_text
-        self.receipt_label.setText(self.receipt_text)
+        for rbtxt in self.RecepitBasic_text:
+            self.receipt_text += rbtxt
+
+        self.last_receipt_text = self.receipt_text+self.new_text
+        self.receipt_label.setText(self.last_receipt_text)
         self.stack.setCurrentWidget(self.Receiptpage)
 
     def PrePage(self):
