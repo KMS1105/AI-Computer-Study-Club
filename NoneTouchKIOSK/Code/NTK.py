@@ -10,6 +10,8 @@ from scipy import stats
 from pyzbar import pyzbar
 from PyQt5.QtCore import Qt
 
+"""https://github.com/KMS1105/AI-Computer-Study-Club/tree/main"""
+
 barcode_data = ''
 Detect_data = ''
 run = True
