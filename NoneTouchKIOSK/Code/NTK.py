@@ -18,6 +18,7 @@ run = True
 QRrun = False
 
 def decode_qr_code(frame):
+    """QR 인식 함수"""
     global barcode_data
     barcodes = pyzbar.decode(frame)
 
@@ -26,6 +27,7 @@ def decode_qr_code(frame):
         print(barcode_data, type(barcode_data))
 
 def recog_gesture():
+    """제스처 인식 함수"""
     global QRrun
     result_list = []
     max_num_hands = 1 # 손은 최대 1개만 인식
@@ -34,7 +36,6 @@ def recog_gesture():
     }
 
     mp_hands = mp.solutions.hands 
-    #mp_drawing = mp.solutions.drawing_utils
 
     hands = mp_hands.Hands(
         max_num_hands=max_num_hands, 
@@ -44,7 +45,7 @@ def recog_gesture():
     file = np.genfromtxt('C:/Users/12612/OneDrive/바탕 화면/Python/AI/HPE/동아리/my_gesture_train.csv', delimiter=',') # 각 제스처들의 라벨과 각도가 저장되어 있음, 정확도를 높이고 싶으면 데이터를 추가해보자!**
     angle = file[:,:-1].astype(np.float32) # 각도
     label = file[:, -1].astype(np.float32) # 라벨
-    knn = cv2.ml.KNearest_create() 
+    knn = cv2.ml.KNearest_create() #K-최근접 알고리즘 생성
     knn.train(angle, cv2.ml.ROW_SAMPLE, label)
 
     cap = cv2.VideoCapture(0)
@@ -61,7 +62,7 @@ def recog_gesture():
                 continue
             
             if QRrun == True:
-                thread2 = threading.Thread(target=decode_qr_code(img))
+                thread2 = threading.Thread(target=decode_qr_code(img)) #스레드 생성
                 thread2.start()
 
             img = cv2.flip(img, 1)
@@ -103,12 +104,7 @@ def recog_gesture():
                         rst = kiosk_gesture[idx].upper()
                         result_list.append(rst)
 
-                    #mp_drawing.draw_landmarks(img, res, mp_hands.HAND_CONNECTIONS) # 손에 랜드마크를 그려줌
-
-                end = time.time()
-                print("%f" % float(end-start))
-
-    mode = stats.mode(result_list)[0]
+    mode = stats.mode(result_list)[0] #가장 보편적인 값 찾기
 
     if len(mode) == 0 : 
         return 'fail'
@@ -120,6 +116,7 @@ def recog_gesture():
         print(Detect_data)
 
 def last_fnc_detect():
+    """0.1초마다 제스처 인식 함수 및 그에 따른 UI이벤트 실행"""
     while True:
         if MainWindow.exe_last_fnc_Detect == False:
             recog_gesture()
@@ -178,7 +175,7 @@ class App(QMainWindow):
         self.Main_check.setGeometry(30, 720, 700, 200)
         self.btn1 = QPushButton(self.Mainpage) 
         self.btn1.setText(str("(1)\n"+self.menu[0][0])+'\n가격: '+str(self.menu[0][1]))
-        self.btn1.setGeometry(20,160,200,200) # 위치 및 크기 지정
+        self.btn1.setGeometry(20,160,200,200) 
         self.btn2 = QPushButton(self.Mainpage) 
         self.btn2.setText(str("(2)\n"+self.menu[1][0])+'\n가격: '+str(self.menu[1][1]))
         self.btn2.setGeometry(235,160,200,200) 
@@ -192,12 +189,12 @@ class App(QMainWindow):
         self.Reset.setText('초기화') 
         self.Reset.setGeometry(15,15,60,40)
 
-        self.option1 = QPushButton(self.Optionpage) # Optionpage를 부모로 option1 생성
+        self.option1 = QPushButton(self.Optionpage) 
         self.option1.setText("(1)\n"+'옵션1: \n'+self.topping[0][0]+'\n가격: '+str(self.topping[0][1])) 
-        self.option1.setGeometry(20,160,200,200) # 위치 및 크기 지정 
-        self.option2 = QPushButton(self.Optionpage) # Optionpage를 부모로 option2 생성
+        self.option1.setGeometry(20,160,200,200) 
+        self.option2 = QPushButton(self.Optionpage)
         self.option2.setText("(2)\n"+'옵션2: \n'+self.topping[1][0]+'\n가격: '+str(self.topping[1][1])) 
-        self.option2.setGeometry(235,160,200,200) # 위치 및 크기 지정 
+        self.option2.setGeometry(235,160,200,200)
         self.checkbtn2 = QPushButton(self.Optionpage)
         self.checkbtn2.setText('담기') 
         self.checkbtn2.setGeometry(590,780,60,40) 
@@ -306,6 +303,7 @@ class App(QMainWindow):
 
         self.AllLabels = [self.BigLabels, self.MiddleLabels, self.SmallLabels]
 
+        #버튼 폰트 및 색상, 크기 지정 
         for bf in range(len(self.Allbtns)):
             for btnfont in self.Allbtns[bf]:
                 self.font = btnfont.font()
@@ -332,6 +330,7 @@ class App(QMainWindow):
 
                 btnfont.setFont(self.font)
 
+        #라벨 폰트 및 색상, 크기 지정 
         for lf in range(len(self.AllLabels)):
             for labelfont in self.AllLabels[lf]:
                 self.font2 = labelfont.font()
@@ -386,6 +385,7 @@ class App(QMainWindow):
         self.stack.setCurrentIndex(0)
 
     def ResetAll(self):
+        """변수 및 페이지 초기화"""
         global barcode_data
         self.nowpg = 0
         self.run = True
@@ -447,6 +447,7 @@ class App(QMainWindow):
 
 
     def GotoSlc(self):
+        """선택 페이지로 이동"""
         self.nowpg = 2
         self.new_text = self.MainText.replace('Shopping Basket: ', '')
         self.new_text = "메뉴 선택: \n"+self.new_text+"\n\n합계 금액: "+str(self.total_price)
@@ -454,6 +455,7 @@ class App(QMainWindow):
         self.stack.setCurrentWidget(self.Selectpage)
 
     def QRPay(self):
+        """QR코드 인식 및 내용 표시"""
         global QRrun
         global barcode_data
         global new_QRdata
@@ -503,6 +505,7 @@ class App(QMainWindow):
         self.stack.setCurrentWidget(self.Receiptpage)
 
     def PrePage(self):
+        """이전 페이지로 이동"""
         if self.stack.currentWidget() == self.Receiptpage:
             self.nowpg -= 1
             self.stack.setCurrentIndex(self.nowpg) 
@@ -517,6 +520,7 @@ class App(QMainWindow):
             self.stack.setCurrentIndex(self.nowpg) 
 
     def GotoMain(self):
+        """메인 화면으로 이동"""
         global barcode_data
         global QRrun
 
@@ -530,16 +534,19 @@ class App(QMainWindow):
         self.ResetAll()
 
     def center(self):
+        """화면 가운데에 표시"""
         qr = self.frameGeometry()
         cp = QDesktopWidget().availableGeometry().center()
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
     def closeEvent(self, QCloseEvent):
+        """종료 이벤트"""
         print("Bye")
         QCloseEvent.accept()
 
     def fnc_Detect(self):
+        """제스처 인식에 따른 UI이벤트 실행"""
         if Detect_data == 'ONE':
             if self.stack.currentWidget() == self.Mainpage:
                 self.btn1.click()
@@ -595,9 +602,9 @@ class App(QMainWindow):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    MainWindow = App()
+    MainWindow = App() #메인 스레드
 
-    thread1 = threading.Thread(target=last_fnc_detect, daemon = True)
+    thread1 = threading.Thread(target=last_fnc_detect, daemon = True) #스레드 생성, 메인 스레드가 꺼질때 같이 종료
     thread1.start()
 
     MainWindow.show()
