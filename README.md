@@ -10,5 +10,5 @@ K-최근접 알고리즘 기반의 제스처 인식 기술을 바탕으로 간�
 
 I made it simple based on gesture recognition technology based on K-nearest algorithm.
 
-#### ⚙️ 개발 환경 (development environment)
+#### ⚙️ 개발 환경 (Development Environment)
 - python3.10
