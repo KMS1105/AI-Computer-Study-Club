@@ -4,14 +4,11 @@
 It is made for the presentation of the high school senior club.
 
 ## Project-NoneTouchKIOSK
-무접촉 키오스크 간단 예시
 
-A simple example of a contactless kiosk
-
-## 프로젝트 소개 (Introduction to the Project)
+### 🖥 프로젝트 소개 (Introduction to the Project)
 K-최근접 알고리즘 기반의 제스처 인식 기술을 바탕으로 간단하게 만들어봤습니다.
 
 I made it simple based on gesture recognition technology based on K-nearest algorithm.
 
-### 개발 환경 (development environment)
-    python3.10
+#### ⚙️ 개발 환경 (development environment)
+-    python3.10
