@@ -13,4 +13,4 @@ It is made for the presentation of the high school senior club.
 - Please note that this is not an actual kiosk program but rather just a conceptual idea.
   
 #### ⚙️ 개발 환경 (Development Environment)
-- python3.10
+- python 3.10
