@@ -30,7 +30,7 @@ def recog_gesture():
     """제스처 인식 함수"""
     global QRrun
     result_list = []
-    max_num_hands = 1 # 손은 최대 1개만 인식
+    max_num_hands = 1 
     kiosk_gesture = {
         0:'zero', 1:'one', 2:'two', 3:'five', 4:'ok', 5:'good'
     }
@@ -42,10 +42,10 @@ def recog_gesture():
         min_detection_confidence=0.7, 
         min_tracking_confidence=0.7)
 
-    file = np.genfromtxt('C:/Users/12612/OneDrive/바탕 화면/Python/AI/HPE/동아리/my_gesture_train.csv', delimiter=',') # 각 제스처들의 라벨과 각도가 저장되어 있음, 정확도를 높이고 싶으면 데이터를 추가해보자!**
-    angle = file[:,:-1].astype(np.float32) # 각도
-    label = file[:, -1].astype(np.float32) # 라벨
-    knn = cv2.ml.KNearest_create() #K-최근접 알고리즘 생성
+    file = np.genfromtxt('C:/Users/12612/OneDrive/바탕 화면/Python/AI/HPE/동아리/my_gesture_train.csv', delimiter=',') 
+    angle = file[:,:-1].astype(np.float32) 
+    label = file[:, -1].astype(np.float32) 
+    knn = cv2.ml.KNearest_create() 
     knn.train(angle, cv2.ml.ROW_SAMPLE, label)
 
     cap = cv2.VideoCapture(0)
@@ -62,7 +62,7 @@ def recog_gesture():
                 continue
             
             if QRrun == True:
-                thread2 = threading.Thread(target=decode_qr_code(img)) #스레드 생성
+                thread2 = threading.Thread(target=decode_qr_code(img))
                 thread2.start()
 
             img = cv2.flip(img, 1)
@@ -72,7 +72,7 @@ def recog_gesture():
             img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
 
             # 각도를 인식하고 제스처를 인식하는 부분
-            if result.multi_hand_landmarks is not None: # 만약 손을 인식하면
+            if result.multi_hand_landmarks is not None:
                 number += 1
                 start = time.time()
                 for res in result.multi_hand_landmarks:
@@ -80,23 +80,23 @@ def recog_gesture():
                     for j, lm in enumerate(res.landmark):
                         joint[j] = [lm.x, lm.y, lm.z] # 각 joint마다 x,y,z 좌표 저장
 
-                    # Compute angles between joints joint마다 각도 계산
+                    # Compute angles between joints joints
                     v1 = joint[[0,1,2,3,0,5,6,7,0,9,10,11,0,13,14,15,0,17,18,19],:] # Parent joint
                     v2 = joint[[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20],:] # Child joint
-                    v = v2 - v1 # [20,3]관절벡터
-                    v = v / np.linalg.norm(v, axis=1)[:, np.newaxis] # 벡터 정규화(크기 1 벡터) = v / 벡터의 크기
+                    v = v2 - v1 # [20,3]
+                    v = v / np.linalg.norm(v, axis=1)[:, np.newaxis] # 벡터 정규화
 
-                    # Get angle using arcos of dot product **내적 후 arcos으로 각도를 구해줌**
+                    # Get angle using arcos of dot product 
                     angle = np.arccos(np.einsum('nt,nt->n',
                         v[[0,1,2,4,5,6,8,9,10,12,13,14,16,17,18],:],
                         v[[1,2,3,5,6,7,9,10,11,13,14,15,17,18,19],:]))
 
                     angle = np.degrees(angle) # radian -> degree
 
-                    # Inference gesture 학습시킨 제스처 모델에 참조를 한다.
+                    # Inference gesture 
                     data = np.array([angle], dtype=np.float32)
-                    ret, results, neighbours, dist = knn.findNearest(data, 3) # k가 3일 때 값을 구한다!
-                    idx = int(results[0][0]) # 인덱스를 저장!
+                    ret, results, neighbours, dist = knn.findNearest(data, 3)
+                    idx = int(results[0][0]) 
 
                     # Draw gesture result
                     if idx in kiosk_gesture.keys():
