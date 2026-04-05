@@ -78,27 +78,23 @@ def recog_gesture():
                 for res in result.multi_hand_landmarks:
                     joint = np.zeros((21, 3)) # (joint수, (x,y,z))
                     for j, lm in enumerate(res.landmark):
-                        joint[j] = [lm.x, lm.y, lm.z] # 각 joint마다 x,y,z 좌표 저장
+                        joint[j] = [lm.x, lm.y, lm.z] 
 
-                    # Compute angles between joints joints
                     v1 = joint[[0,1,2,3,0,5,6,7,0,9,10,11,0,13,14,15,0,17,18,19],:] # Parent joint
                     v2 = joint[[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20],:] # Child joint
-                    v = v2 - v1 # [20,3]
+                    v = v2 - v1 
                     v = v / np.linalg.norm(v, axis=1)[:, np.newaxis] # 벡터 정규화
-
-                    # Get angle using arcos of dot product 
+ 
                     angle = np.arccos(np.einsum('nt,nt->n',
                         v[[0,1,2,4,5,6,8,9,10,12,13,14,16,17,18],:],
                         v[[1,2,3,5,6,7,9,10,11,13,14,15,17,18,19],:]))
 
                     angle = np.degrees(angle) # radian -> degree
 
-                    # Inference gesture 
                     data = np.array([angle], dtype=np.float32)
                     ret, results, neighbours, dist = knn.findNearest(data, 3)
                     idx = int(results[0][0]) 
 
-                    # Draw gesture result
                     if idx in kiosk_gesture.keys():
                         cv2.putText(img, text=kiosk_gesture[idx].upper(), org=(int(res.landmark[0].x * img.shape[1]), int(res.landmark[0].y * img.shape[0] + 20)), fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1, color=(255, 255, 255), thickness=2)
                         rst = kiosk_gesture[idx].upper()
@@ -146,11 +142,9 @@ class App(QMainWindow):
 
         self.stack = QStackedWidget(self) 
 
-        # QStackedWidget 생성 
-        self.stack.setGeometry(0,0,self.wid, self.hei) # 위치 및 크기 지정 
-        self.stack.setFrameShape(QFrame.Box) # 테두리 설정(보기 쉽게) 
+        self.stack.setGeometry(0,0,self.wid, self.hei)  
+        self.stack.setFrameShape(QFrame.Box) 
 
-        # 입력할 page를 QWidget으로 생성 
         self.Mainpage = QWidget(self) 
         self.Optionpage = QWidget(self)
         self.Selectpage = QWidget(self) 
@@ -158,7 +152,6 @@ class App(QMainWindow):
         self.Paypage2 = QWidget(self)
         self.Receiptpage = QWidget(self)
 
-        # page에 위젯 추가하기 
         self.Prebtn1 = QPushButton(self.Optionpage)
         self.Prebtn1.setText('뒤로가기')
         self.Prebtn1.setGeometry(20,20,60,40)
@@ -303,7 +296,6 @@ class App(QMainWindow):
 
         self.AllLabels = [self.BigLabels, self.MiddleLabels, self.SmallLabels]
 
-        #버튼 폰트 및 색상, 크기 지정 
         for bf in range(len(self.Allbtns)):
             for btnfont in self.Allbtns[bf]:
                 self.font = btnfont.font()
@@ -330,7 +322,6 @@ class App(QMainWindow):
 
                 btnfont.setFont(self.font)
 
-        #라벨 폰트 및 색상, 크기 지정 
         for lf in range(len(self.AllLabels)):
             for labelfont in self.AllLabels[lf]:
                 self.font2 = labelfont.font()
@@ -359,7 +350,6 @@ class App(QMainWindow):
         
         self.stack.setStyleSheet('background:rgb(25,255,200)')
         
-        # 내용입력이 완료된 페이지를 QStackedWidget객체에 추가
         self.stack.addWidget(self.Mainpage) 
         self.stack.addWidget(self.Optionpage) 
         self.stack.addWidget(self.Selectpage)
@@ -492,7 +482,7 @@ class App(QMainWindow):
         if self.stack.currentWidget() == self.Paypage2:
             self.nowpg = 5
         
-        self.RecepitBasic_text = ["\n주소:대전광역시 서구 둔산동...",
+        self.RecepitBasic_text = ["\n주소:XX광역시 K구 123동...",
                         "\n대표:ㅁㅁㅁ             전화:042-1234-1234",
                         "\n=======================================================================================\n\n"]
         self.receipt_text = ""
@@ -602,10 +592,9 @@ class App(QMainWindow):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    MainWindow = App() #메인 스레드
+    MainWindow = App()
 
-    thread1 = threading.Thread(target=last_fnc_detect, daemon = True) #스레드 생성, 메인 스레드가 꺼질때 같이 종료
-    thread1.start()
+    thread1 = threading.Thread(target=last_fnc_detect, daemon = True) 
 
     MainWindow.show()
     sys.exit(app.exec_())
